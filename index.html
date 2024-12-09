@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>GIF CUT</title>
-	<link src="./styles.css">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>GIF CUT</title>
+		<link src="./styles.css">
 	</link>
-</head>
+	</head>
 
-<body>
-	<script src="./script.js" defer type="module"></script>
-	<button id="play">Play</button>
-	<button id="start">Start Capture</button>
-	&nbsp;
-	<button id="stop">
-		Stop Capture
-	</button>
-	<video id="video" autoplay width='100%' height='100%'></video>
-	<canvas id='canvas' width='400px' height='400px'>
-
-		<strong>Log:</strong>
-		<pre id="log"></pre>
-</body>
+	<body style="display: flex; margin: 0; padding: 0">
+		<div style="position: fixed; top: 0px; left: 0px; z-index: 10">
+			<button id="download">Download</button>
+			<button id="play">Play</button>
+			<button id="start">Start Capture</button>
+			&nbsp;
+			<button id="stop">
+				Stop Capture
+			</button>
+		</div>
+		<div>
+			<video id="video" autoplay width='100%'></video>
+			<canvas id='canvas'>
+		</div>
+	</body>
+	<footer>
+		<script src="./script.js" defer type="module"></script>
+	</footer>
 
 </html>
