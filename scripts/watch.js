@@ -29,7 +29,7 @@ function cmd(program, args) {
 }
 
 cmd("tsc", ["-w"]);
-cmd("http-server", ["-p", "6969", "-a", "127.0.0.1", "-s", "-c-1"]);
+cmd("http-server", ["-p", "8080", "-a", "127.0.0.1", "-s", "-c-1"]);
 
 const wss = new WebSocketServer({
   port: 6970,
@@ -46,14 +46,14 @@ wss.on("connection", (ws) => {
   });
 });
 
-const COLD_RELOAD_FILES = ["index.html", "index.js"];
+const COLD_RELOAD_FILES = ["public/index.html", "src/index.js"];
 COLD_RELOAD_FILES.forEach((file) =>
   watchFile(path.join(__dirname, file), { interval: 50 }, () => {
     websockets.forEach((socket) => socket.send("cold"));
   }),
 );
 
-const HOT_RELOAD_FILES = ["gif-cut.js"];
+const HOT_RELOAD_FILES = ["src/index.js"];
 HOT_RELOAD_FILES.forEach((file) =>
   watchFile(path.join(__dirname, file), { interval: 50 }, () => {
     websockets.forEach((socket) => socket.send("hot"));

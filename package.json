@@ -1,10 +1,10 @@
 {
-  "name": "gif-cut",
+  "name": "perlin-noise-for-web",
   "version": "1.0.0",
-  "main": "script.js",
+  "main": "index.mjs",
   "scripts": {
     "build": "tsc",
-    "watch": "node watch.js",
+    "watch": "node scripts/watch.js",
     "serve": "node serve.js"
   },
   "author": "",
