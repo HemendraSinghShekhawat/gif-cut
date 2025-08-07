@@ -1,4 +1,4 @@
-import { screenFrameCaptureConfigs } from "./config/appConfig";
-console.log("hello world");
-console.log("is this working");
+import { screenFrameCaptureConfigs } from "./config/appConfig.js";
+import "./capture/frameHandler.js";
+import "./capture/screenCapture.js";
 console.log(screenFrameCaptureConfigs);
