@@ -1,29 +1,72 @@
-"use strict";
-const startCaptureButton = document.getElementById("start");
+import { canvas, ctx } from "./frameHandler.js";
+import { displayMediaOptions } from "../config/appConfig.js";
 let preview = document.getElementById("preview");
-let recording = document.getElementById("recording");
+let recordingButton = document.getElementById("recordScreenButton");
 let startButton = document.getElementById("startButton");
 let stopButton = document.getElementById("stopButton");
-let downloadButton = document.getElementById("downloadButton");
-let recordingTimeMS = 5000;
 const screenRecord = async () => {
     try {
         startButton.addEventListener("click", async () => {
-            console.log("begining");
-            console.log(ctx);
             preview.srcObject = await navigator.mediaDevices.getUserMedia({
                 video: true,
+                audio: false,
             });
             await new Promise((resolve) => (preview.onloadedmetadata = resolve));
             canvas.width = preview.videoWidth;
             canvas.height = preview.videoHeight;
-            console.log(ctx, "hello world");
             ctx?.drawImage(preview, 0, 0);
-            console.log("end");
         });
     }
     catch (err) {
         console.error(err);
     }
 };
+function screenRecording(displayMediaOptions) {
+    recordingButton.addEventListener("click", async () => {
+        let captureStream = null;
+        try {
+            captureStream =
+                await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+            preview.srcObject = captureStream;
+        }
+        catch (err) {
+            console.error(`Error: ${err}`);
+        }
+        return captureStream;
+    });
+}
+function computeFrame() {
+    ctx?.drawImage(preview, 0, 0, preview.width, preview.height);
+    const frame = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+    const data = frame?.data || [];
+    if (frame && ctx) {
+        ctx?.putImageData(frame, 0, 0);
+    }
+}
+function timerCallback() {
+    if (preview.paused || preview.ended) {
+        return;
+    }
+    computeFrame();
+    setTimeout(() => {
+        timerCallback();
+    }, 0);
+}
+preview.addEventListener("play", () => {
+    if (ctx) {
+        ctx.imageSmoothingEnabled = false;
+        ctx.imageSmoothingQuality = "high";
+    }
+    canvas.width = preview.width;
+    canvas.height = preview.height;
+    timerCallback();
+}, false);
+stopButton.addEventListener("click", () => {
+    if (preview.srcObject instanceof MediaStream) {
+        let tracks = preview.srcObject.getTracks();
+        tracks.forEach((track) => track.stop());
+        preview.srcObject = null;
+    }
+});
 screenRecord();
+screenRecording(displayMediaOptions);

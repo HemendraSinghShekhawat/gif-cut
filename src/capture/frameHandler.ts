@@ -1,6 +1,6 @@
-const canvas: HTMLCanvasElement = document.getElementById(
+export const canvas: HTMLCanvasElement = document.getElementById(
   "canvas",
 ) as HTMLCanvasElement;
 
-const ctx = canvas.getContext("2d");
+export const ctx = canvas.getContext("2d");
 console.log(ctx);
