@@ -1,15 +1,14 @@
 import { canvas, ctx } from "./frameHandler.js";
 import { displayMediaOptions } from "../config/appConfig.js";
 
+let imageDataDump: ImageData[] = [];
+
 let preview = document.getElementById("preview") as HTMLVideoElement;
 let recordingButton = document.getElementById(
   "recordScreenButton",
 ) as HTMLVideoElement;
 let startButton = document.getElementById("startButton") as HTMLButtonElement;
 let stopButton = document.getElementById("stopButton") as HTMLButtonElement;
-// let downloadButton = document.getElementById(
-//   "downloadButton",
-// ) as HTMLButtonElement;
 
 const screenRecord = async () => {
   try {
@@ -21,7 +20,6 @@ const screenRecord = async () => {
       await new Promise((resolve) => (preview.onloadedmetadata = resolve));
       canvas.width = preview.videoWidth;
       canvas.height = preview.videoHeight;
-
       ctx?.drawImage(preview, 0, 0);
     });
   } catch (err) {
@@ -45,10 +43,20 @@ function screenRecording(displayMediaOptions: DisplayMediaStreamOptions) {
 }
 
 function computeFrame() {
-  ctx?.drawImage(preview, 0, 0, preview.width, preview.height);
+  ctx?.drawImage(preview, 0, 0, preview.videoWidth, preview.videoHeight);
   const frame = ctx?.getImageData(0, 0, canvas.width, canvas.height);
   const data = frame?.data || [];
   if (frame && ctx) {
+    imageDataDump.push(frame);
+    if (imageDataDump.length >= 100) {
+      if (preview.srcObject instanceof MediaStream) {
+        let tracks = preview.srcObject.getTracks();
+
+        tracks.forEach((track) => track.stop());
+        preview.srcObject = null;
+        console.log(imageDataDump);
+      }
+    }
     ctx?.putImageData(frame, 0, 0);
   }
 }
@@ -70,8 +78,9 @@ preview.addEventListener(
       ctx.imageSmoothingEnabled = false;
       ctx.imageSmoothingQuality = "high";
     }
-    canvas.width = preview.width;
-    canvas.height = preview.height;
+    canvas.width = preview.videoWidth;
+    canvas.height = preview.videoHeight;
+    imageDataDump = [];
     timerCallback();
   },
   false,
@@ -83,6 +92,7 @@ stopButton.addEventListener("click", () => {
 
     tracks.forEach((track) => track.stop());
     preview.srcObject = null;
+    console.log(imageDataDump);
   }
 });
 

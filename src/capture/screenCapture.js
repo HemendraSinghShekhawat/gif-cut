@@ -1,5 +1,6 @@
 import { canvas, ctx } from "./frameHandler.js";
 import { displayMediaOptions } from "../config/appConfig.js";
+let imageDataDump = [];
 let preview = document.getElementById("preview");
 let recordingButton = document.getElementById("recordScreenButton");
 let startButton = document.getElementById("startButton");
@@ -36,10 +37,19 @@ function screenRecording(displayMediaOptions) {
     });
 }
 function computeFrame() {
-    ctx?.drawImage(preview, 0, 0, preview.width, preview.height);
+    ctx?.drawImage(preview, 0, 0, preview.videoWidth, preview.videoHeight);
     const frame = ctx?.getImageData(0, 0, canvas.width, canvas.height);
     const data = frame?.data || [];
     if (frame && ctx) {
+        imageDataDump.push(frame);
+        if (imageDataDump.length >= 100) {
+            if (preview.srcObject instanceof MediaStream) {
+                let tracks = preview.srcObject.getTracks();
+                tracks.forEach((track) => track.stop());
+                preview.srcObject = null;
+                console.log(imageDataDump);
+            }
+        }
         ctx?.putImageData(frame, 0, 0);
     }
 }
@@ -57,8 +67,9 @@ preview.addEventListener("play", () => {
         ctx.imageSmoothingEnabled = false;
         ctx.imageSmoothingQuality = "high";
     }
-    canvas.width = preview.width;
-    canvas.height = preview.height;
+    canvas.width = preview.videoWidth;
+    canvas.height = preview.videoHeight;
+    imageDataDump = [];
     timerCallback();
 }, false);
 stopButton.addEventListener("click", () => {
@@ -66,6 +77,7 @@ stopButton.addEventListener("click", () => {
         let tracks = preview.srcObject.getTracks();
         tracks.forEach((track) => track.stop());
         preview.srcObject = null;
+        console.log(imageDataDump);
     }
 });
 screenRecord();
