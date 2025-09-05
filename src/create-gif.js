@@ -1,4 +1,4 @@
-import * as NeuQuant from "./NeuQuant.js";
+import { NeuQuant } from "./NeuQuant.js";
 import * as LZWEncoder from "./LZWEncoder.js";
 class ByteArray {
     bin = [];

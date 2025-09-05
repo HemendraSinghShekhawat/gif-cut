@@ -1,4 +1,4 @@
-import * as NeuQuant from "./NeuQuant.js";
+import {NeuQuant} from "./NeuQuant.js";
 import * as LZWEncoder from "./LZWEncoder.js";
 
 class ByteArray {
@@ -55,7 +55,7 @@ class GIFEncoder {
   pixels: number[] | null;
   usedEntry: boolean[];
   indexedPixels: number[] | null;
-  colorTab: NeuQuant | null;
+  colorTab: number[] | null;
   colorDepth: number;
   palSize: number | null;
   transIndex: number;
@@ -361,7 +361,7 @@ class GIFEncoder {
     this.indexedPixels = [];
 
     let nq = new NeuQuant(this.pixels, len, this.sample);
-    this.colorTab = nq.process();
+    this.colorTab = nq.process() as number[]; // create reduced palette
     let k = 0;
     for (let j = 0; j < nPix; j++) {
       var index = nq.map(
