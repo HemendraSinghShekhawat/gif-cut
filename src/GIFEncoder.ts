@@ -1,7 +1,7 @@
 import {NeuQuant} from "./NeuQuant.js";
-import * as LZWEncoder from "./LZWEncoder.js";
+import {LZWEncoder} from "./LZWEncoder.js";
 
-class ByteArray {
+export class ByteArray {
   bin: number[] = [];
   constructor() {
     this.bin = [];
@@ -35,7 +35,7 @@ class ByteArray {
   }
 }
 
-class GIFEncoder {
+export class GIFEncoder {
   width: number | undefined;
   height: number | undefined;
   transparent: never | null;
@@ -222,10 +222,10 @@ class GIFEncoder {
 
   writePixels() {
     let myencoder = new LZWEncoder(
-      this.width,
-      this.height,
-      this.indexedPixels,
-      this.colorDepth,
+      this.width || 0,
+      this.height || 0,
+      this.indexedPixels || [],
+      this.colorDepth || 0,
     );
     myencoder.encode(this.gifBuffer);
   }
