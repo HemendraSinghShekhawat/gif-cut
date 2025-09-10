@@ -243,7 +243,17 @@ export class NeuQuant {
           p[2] -= (a * (p[2] - r)) / this.alpharadbias;
         } catch (e) {} // prevents 1.3 miscompilation
       }
-    }
+
+			if(k > lo) {
+				p = this.network[k--];
+
+				try {
+					p[0] -= (a * (p[0] -b)) / this.alpharadbias;
+					p[1] -= (a * (p[1] - g)) / this.alpharadbias;
+					p[2] -= (a * (p[2] - g)) / this.alpharadbias;
+				} catch (e) {}
+			}
+		}
   }
 
   /*

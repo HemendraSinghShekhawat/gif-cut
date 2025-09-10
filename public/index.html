@@ -22,12 +22,16 @@
 		}
 		#videocontainer {
 			display: flex;
-			width: 100%;
-			height: fit-content;
+			width: 10px;
+			height: 10px;
+			border: 2px solid red;
 		}
 		#cavnascontainer {
-			width: 100%;
-			height: 50%;
+			width: 10px;
+			height: 10px;
+			border: 2px solid blue;
+			<!-- width: 100%; -->
+			<!-- height: 50%; -->
 		}
 		#preview {
 			width: 100%;
@@ -45,7 +49,7 @@
 	</head>
 
 	<body>
-		<div style="position: fixed; top: 0px; left: 0px; z-index: 10">
+		<div style="position: fixed; top: 0px; right: 0px; z-index: 10">
 			<button id="play">Play</button>
 			<button id="startButton">Start Capture</button>
 			<button id="recordScreenButton">Record Screen</button>

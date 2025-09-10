@@ -179,6 +179,15 @@ export class NeuQuant {
                 }
                 catch (e) { }
             }
+            if (k > lo) {
+                p = this.network[k--];
+                try {
+                    p[0] -= (a * (p[0] - b)) / this.alpharadbias;
+                    p[1] -= (a * (p[1] - g)) / this.alpharadbias;
+                    p[2] -= (a * (p[2] - g)) / this.alpharadbias;
+                }
+                catch (e) { }
+            }
         }
     }
     altersingle(alpha, i, b, g, r) {

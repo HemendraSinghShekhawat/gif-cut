@@ -1,5 +1,8 @@
 import { canvas, ctx } from "./frameHandler.js";
 import { displayMediaOptions } from "../config/appConfig.js";
+import { GIFEncoder } from "../GIFEncoder.js";
+
+let encoder = new GIFEncoder();
 
 let imageDataDump: ImageData[] = [];
 
@@ -20,6 +23,7 @@ const screenRecord = async () => {
       await new Promise((resolve) => (preview.onloadedmetadata = resolve));
       canvas.width = preview.videoWidth;
       canvas.height = preview.videoHeight;
+			console.log(preview.videoWidth, preview.videoHeight)
       ctx?.drawImage(preview, 0, 0);
     });
   } catch (err) {
@@ -44,7 +48,8 @@ function screenRecording(displayMediaOptions: DisplayMediaStreamOptions) {
 
 function computeFrame() {
   ctx?.drawImage(preview, 0, 0, preview.videoWidth, preview.videoHeight);
-  const frame = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+  const frame = ctx?.getImageData(0, 0, 10, 10);
+  // const frame = ctx?.getImageData(0, 0, canvas.width, canvas.height);
   const data = frame?.data || [];
   if (frame && ctx) {
     imageDataDump.push(frame);
@@ -58,6 +63,8 @@ function computeFrame() {
       }
     }
     ctx?.putImageData(frame, 0, 0);
+		encoder.addFrame(ctx)
+		// console.log(encoder.out, "from video frame");
   }
 }
 
@@ -66,6 +73,7 @@ function timerCallback() {
     return;
   }
   computeFrame();
+	stopVideoRecording()
   setTimeout(() => {
     timerCallback();
   }, 0);
@@ -78,22 +86,43 @@ preview.addEventListener(
       ctx.imageSmoothingEnabled = false;
       ctx.imageSmoothingQuality = "high";
     }
-    canvas.width = preview.videoWidth;
-    canvas.height = preview.videoHeight;
+		canvas.width = 10;
+		canvas.height = 10;
+    // canvas.width = preview.videoWidth;
+    // canvas.height = preview.videoHeight;
     imageDataDump = [];
+		encoder.start()
     timerCallback();
   },
   false,
 );
 
-stopButton.addEventListener("click", () => {
+const stopVideoRecording = () => {
   if (preview.srcObject instanceof MediaStream) {
     let tracks = preview.srcObject.getTracks();
+		encoder.finish();
+		let fileType = 'image/gif';
+		let readableStream = encoder.stream();
+		let bin_gif = new Uint8Array(readableStream);
+		let blob = new Blob([bin_gif], { type: fileType });
+		let url = URL.createObjectURL(blob)
+		console.log(url, "url");
+
+		let gifViewer = document.createElement('img');
+		gifViewer.src = url;
+		document.body.appendChild(gifViewer);
+		let normalGifViewer = document.createElement('img');
+		normalGifViewer.src = 'https://giflib.sourceforge.net/whatsinagif/sample_1.gif';// url;
+		document.body.appendChild(normalGifViewer);
 
     tracks.forEach((track) => track.stop());
     preview.srcObject = null;
     console.log(imageDataDump);
   }
+}
+
+stopButton.addEventListener("click", () => {
+	stopVideoRecording()
 });
 
 screenRecord();

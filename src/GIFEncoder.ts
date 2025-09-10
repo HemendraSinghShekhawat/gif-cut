@@ -133,6 +133,7 @@ export class GIFEncoder {
       ok = false;
     }
 
+		console.log(this.out);
     return (this.started = ok);
   }
 
@@ -456,8 +457,3 @@ export class GIFEncoder {
     this.firstFrame = true;
   }
 }
-
-const gifBuffer = new ByteArray();
-
-gifBuffer.writeUTFBytes("GIF89a");
-console.log(gifBuffer);
